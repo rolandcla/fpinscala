@@ -12,7 +12,8 @@ lazy val root = (project in file("."))
 lazy val exercises = (project in file("exercises"))
   .settings(commonSettings)
   .settings(
-    name := "exercises"
+    name := "exercises",
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
   )
 
 lazy val answers = (project in file("answers"))
