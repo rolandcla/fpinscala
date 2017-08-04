@@ -23,6 +23,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
+  // Exercise 1
   val x = List(1,2,3,4,5) match {
     case Cons(x, Cons(2, Cons(4, _))) => x
     case Nil => 42
@@ -30,6 +31,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(h, t) => h + sum(t)
     case _ => 101
   }
+  // == 3 (tested in ListSpec.scala)
 
   def append[A](a1: List[A], a2: List[A]): List[A] =
     a1 match {
@@ -49,28 +51,61 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
-
+  // Exercise 2
   def tail[A](l: List[A]): List[A] =
     l match {
       case Nil => throw new NoSuchElementException("tail(Nil)")
       case Cons(_, t) => t
     }
 
+  // Exercise 5
   def setHead[A](l: List[A], h: A): List[A] =
     l match {
       case Nil => throw new NoSuchElementException("setHead(Nil)")
       case Cons(_, t) => Cons(h, t)
     }
 
-  def drop[A](l: List[A], n: Int): List[A] = ???
+  // Exercise 3
+  def drop[A](l: List[A], n: Int): List[A] =
+    if (n == 0) l
+    else l match {
+      case Nil => throw new NoSuchElementException("drop(Nil,_)")
+      case Cons(_, t) => drop(t, n - 1)
+    }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
+  // Exercise 4
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] =
+    l match {
+      case Nil => Nil
+      case Cons(h, t) => if (f(h)) dropWhile(t, f)
+                         else l
+    }
 
-  def init[A](l: List[A]): List[A] = ???
+  // Exercise 6
+  def init[A](l: List[A]): List[A] =
+    l match {
+      case Nil => throw new NoSuchElementException("init(Nil)")
+      case Cons(_, Nil) => Nil
+      case Cons(h, t) => Cons(h, init(t))
+    }
 
-  def length[A](l: List[A]): Int = ???
+  // Exercise 7
+  def product3(ns: List[Double]) =
+    foldRight(ns, 1.0)(_ * _)
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  // Exercise 8
+  // tested in ListSpec.scala !!!
+
+  // Exercise 9
+  def length[A](l: List[A]): Int = foldRight(l, 0)((_, n) => n + 1)
+
+  // Exercise 10
+  @annotation.tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B =
+    l match {
+      case Nil => z
+      case Cons(h, t) => foldLeft(t, f(z, h))(f)
+    }
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 }
