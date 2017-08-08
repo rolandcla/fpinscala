@@ -107,5 +107,47 @@ object List { // `List` companion object. Contains functions for creating and wo
       case Cons(h, t) => foldLeft(t, f(z, h))(f)
     }
 
+  // Exercise 11
+  def sumFL(xs: List[Int]): Int = foldLeft(xs, 0)(_ + _)
+
+  def productFL(xs: List[Double]): Double = foldLeft(xs, 1.0)(_ * _)
+
+  def lengthFL[A](xs: List[A]): Int = foldLeft(xs, 0)((l,_) => l + 1)
+
+  // Exercise 12
+  def reverse[A](xs: List[A]): List[A] = foldLeft(xs, Nil: List[A])( (ys, y) => Cons(y, ys) )
+
+  // Exercise 13
+  def foldRightUsingFL[A,B](l: List[A], z: B)(f: (A, B) => B) =
+    foldLeft(reverse(l), z)( (b,a) => f(a, b) )
+
+  // def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
+  //   as match {
+  //     case Nil => z
+  //     case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+  //   }
+
+  // def foldLeftUsingFR[A,B](l: List[A], z: B)(f: (B, A) => B) = {
+  //   def go(xxs: List[A]): B => B = xxs match {
+  //     case Nil         => (acc: B) => acc
+  //     case Cons(x, xs) => (acc: B) => go(xs)(f(acc, x))
+  //   }
+  //   go(l)(z)
+  // }
+
+  def foldLeftUsingFR[A,B](l: List[A], z: B)(f: (B, A) => B) = {
+    def step(x: A, facc: B => B): B => B = (acc: B) => facc(f(acc, x))
+    foldRight(l, (acc: B) => acc)(step)(z)
+  }
+
+  // Exercise 14
+  def appendUsingFR[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)((a: A, aa: List[A]) => Cons(a, aa))
+
+  // Exercise 15
+  def concatenate[A](xss: List[List[A]]): List[A] =
+    foldRight(xss, Nil: List[A])((xs, acc) => appendUsingFR(xs, acc))
+
+
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 }
