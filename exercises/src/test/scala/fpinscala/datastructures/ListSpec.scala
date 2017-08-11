@@ -146,4 +146,74 @@ class ListSpec extends FlatSpec {
     assertResult(Nil)(concatenate(Nil))
     assertResult(Nil)(concatenate(List(Nil, Nil, Nil)))
   }
+
+  "Exercise 16 - addOne(xs)" should "add 1 to each element of xs" in {
+    assertResult(Nil){ addOne(Nil) }
+    assertResult(List(2,3,4)){ addOne(List(1,2,3)) }
+  }
+
+  "Exercise 17 - mapDblToStr(ds)" should "turn each Double in ds to a String" in {
+    assertResult(Nil){ mapDblToStr(Nil) }
+    val ds = List(2.0, 4.2, 0.42)
+    assertResult(List("2.0", "4.2", "0.42")){ mapDblToStr(ds) }
+  }
+
+  "Exercise 18 - map(xs)(f)" should "return a list of each element of xs applied to f" in {
+    assertResult(Nil){ map(Nil: List[Int])(_ + 1)}
+    assertResult(List(2,3,4)){ map(List(1,2,3))(_ + 1) }
+    val ds = List(2.0, 4.2, 0.42)
+    assertResult(List("2.0", "4.2", "0.42")){ map(ds)(d => d.toString) }
+  }
+
+  "Exercise 19 - filter(xs)(p)" should "remove each element of xs unless they satisfy the predicate p" in {
+    assertResult(Nil){ filter(Nil: List[Int])(x => true) }
+    assertResult(List(1,2,3)) {filter(List(1,2,3))(x => true)}
+    assertResult(List(1,2,3)) {filter(List(-4,1,-2,2,3,-5))(_ > 0)}
+  }
+
+  "Exercise 20 - flatMap(xs)(f)" should "work like map but with the lists produced by f concatenated to the result" in {
+    val xs = List(1,2,3)
+    assertResult(Nil){ flatMap(Nil: List[Int])(x => List(x)) }
+    assertResult(List(1,2,3)) { flatMap(xs)(x => List(x))}
+    assertResult(List(1,2,2,4,3,6)) { flatMap(xs)(x => List(x, x*2))}
+  }
+
+  "Exercise 21 - filterFM(xs)(p)" should "work like filter" in {
+    assertResult(Nil){ filterFM(Nil: List[Int])(x => true) }
+    assertResult(List(1,2,3)) {filterFM(List(1,2,3))(x => true)}
+    assertResult(List(1,2,3)) {filterFM(List(-4,1,-2,2,3,-5))(_ > 0)}
+  }
+
+  "Exercise 22 - add2List(xs, ys)" should "construct a new list by adding corresponding elements of xs and ys" in {
+    assertResult(Nil) { add2List(List(1,2,3), Nil) }
+    assertResult(Nil) { add2List(Nil, List(1,2,3)) }
+    assertResult(List(5,7,9)) { add2List(List(4,5,6), List(1,2,3)) }
+    assertResult(List(5,7,9)) { add2List(List(4,5,6,42), List(1,2,3)) }
+    assertResult(List(5,7,9)) { add2List(List(4,5,6), List(1,2,3,42)) }
+  }
+
+  "Exercise 23 - zip(xs, ys)" should "construct a new list by applying f corresponding elements of xs and ys" in {
+    assertResult(Nil) { zip(List(1,2,3), Nil: List[Int])(_ + _) }
+    assertResult(Nil) { zip(Nil: List[Int], List(1,2,3))(_ + _) }
+    assertResult(List(5,7,9)) { zip(List(4,5,6), List(1,2,3))(_ + _) }
+    assertResult(List(5,7,9)) { zip(List(4,5,6,42), List(1,2,3))(_ + _) }
+    assertResult(List(5,7,9)) { zip(List(4,5,6), List(1,2,3,42))(_ + _) }
+  }
+
+  "Exercise 24 - hasSubsequence(l, sub)" should "checking whether l contains sub" in {
+    assertResult(true) { hasSubsequence(Nil, Nil) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), Nil) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(1)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(2)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(4)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(1,2)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(2,3)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(3,4)) }
+    assertResult(true) { hasSubsequence(List(1,2,3,4), List(1,2,3,4)) }
+    assertResult(false) { hasSubsequence(List(), List(3)) }
+    assertResult(false) { hasSubsequence(List(1,2), List(3)) }
+    assertResult(false) { hasSubsequence(List(1,2,3,4), List(3,2)) }
+    assertResult(false) { hasSubsequence(List(1,2,3,4), List(1,2,3,4,5)) }
+    assertResult(false) { hasSubsequence(List(1,2,3,4), List(0,1,2,3,4)) }
+  }
 }

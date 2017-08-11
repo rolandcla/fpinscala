@@ -148,6 +148,48 @@ object List { // `List` companion object. Contains functions for creating and wo
   def concatenate[A](xss: List[List[A]]): List[A] =
     foldRight(xss, Nil: List[A])((xs, acc) => appendUsingFR(xs, acc))
 
+  // Exercise 16
+  def addOne(xs: List[Int]) =
+    foldRight(xs, Nil: List[Int])((x,ys) => Cons(x + 1, ys))
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = ???
+  // Exercise 17
+  def mapDblToStr(ds: List[Double]): List[String] =
+    foldRight(ds, Nil: List [String]) ((d, sds) => Cons(d.toString, sds))
+
+  // Exercise 18
+  def map[A,B](l: List[A])(f: A => B): List[B] =
+    foldRight(l, Nil: List[B]) ((x, acc) => Cons(f(x), acc))
+
+  // Exercise 19
+  def filter[A](l: List[A])(p: A => Boolean): List[A] =
+    foldRight(l, Nil: List[A])((x, acc) => if (p(x)) Cons(x, acc) else acc)
+
+  // Exercise 20
+  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] =
+    foldRight(l, Nil: List[B])((x, acc) => append(f(x), acc))
+
+  // Exercise 21
+  def filterFM[A](l: List[A])(p: A => Boolean): List[A] =
+    flatMap(l)(x => if (p(x)) List(x) else List())
+
+  // Exercise 22
+  def add2List(xs: List[Int], ys: List[Int]): List[Int] = (xs,ys) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(x, txs), Cons(y, tys)) => Cons(x + y, add2List(txs, tys))
+  }
+
+  // Exercise 23
+  def zip[A,B,C](xs: List[A], ys: List[B])(f: (A, B) => C): List[C] = (xs, ys) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(x, txs), Cons(y, tys)) => Cons(f(x, y), zip(txs, tys)(f))
+  }
+
+  // Exercise 24
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = (l, sub) match {
+    case (_, Nil) => true
+    case (Nil, _) => false
+    case (Cons(x,xs), Cons(y,ys)) => x == y && hasSubsequence(xs, ys) || hasSubsequence(xs, sub)
+  }
 }
