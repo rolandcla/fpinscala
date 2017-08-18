@@ -2,6 +2,7 @@ package fpinscala.errorhandling
 
 
 import scala.{Option => _, Some => _, Either => _, _} // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
+import java.util.regex._
 
 sealed trait Option[+A] {
   def map[B](f: A => B): Option[B] = this match {
@@ -47,11 +48,34 @@ object Option {
   def mean(xs: Seq[Double]): Option[Double] =
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
-  def variance(xs: Seq[Double]): Option[Double] = ???
 
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
+  def variance(xs: Seq[Double]): Option[Double] = {
+    val om = mean(xs)
+    om.flatMap( m => Some(xs.map(x => (x-m)*(x-m)).sum / xs.length) )
+  }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
+  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] =
+    for { x <- a
+          y <- b } yield f(x,y)
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  def pattern(s: String): Option[Pattern] =
+    try {
+      Some(Pattern.compile(s))
+    } catch {
+      case e: PatternSyntaxException => None
+    }
+
+  def mkMatcher(pat: String): Option[String => Boolean] =
+    pattern(pat) map (p => (s: String) => p.matcher(s).matches)
+
+  def bothMatch_2(pat1: String, pat2: String, s: String): Option[Boolean] =
+    map2(mkMatcher(pat1), mkMatcher(pat2))(_(s) && _(s))
+
+  def sequence[A](a: List[Option[A]]): Option[List[A]] =
+    a.foldRight[Option[List[A]]] (Some(List())) ((opt, acc) => map2(opt, acc)(_ :: _))
+
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] =
+    a.foldRight[Option[List[B]]] (Some(List())) ((x, acc) => map2(f(x), acc)(_ :: _))
+
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(x => x)
 }
